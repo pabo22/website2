@@ -1,0 +1,64 @@
+/**
+ * DESIGN-TOKENS – IS-Bau GmbH
+ * ---------------------------
+ * Einzige Stelle, an der Farben definiert werden. Für ein neues Kundenprojekt
+ * reicht es, hier die Akzentfarbe zu tauschen; kein Hex-Wert steht sonst im Code.
+ *
+ * Akzentfarbe: das Navy der Wortmarke. Für Fließtext-Links leicht aufgehellt
+ * (#1b2a80 statt #0a0f52), damit sie sich vom Text abheben und trotzdem
+ * WCAG-AA gegen den hellen Grund erfüllen. Das originale Logo-Navy lebt als
+ * --color-ink im dunklen Band weiter.
+ */
+
+:root {
+  color-scheme: light;
+
+  --color-background: #f6f7f9;
+  --color-surface: #ffffff;
+  --color-surface-sunken: #edeff4;
+  --color-text: #14161d;
+  --color-text-muted: #5a6070;
+  --color-border: #e0e3ea;
+
+  --color-accent: #1b2a80;
+  --color-accent-hover: #101c5c;
+  /* Textfarbe AUF der Akzentfläche – im Dark Mode invertiert */
+  --color-accent-contrast: #ffffff;
+  --color-accent-soft: rgba(27, 42, 128, 0.08);
+
+  /* Dunkles Band (Logo-Navy) – innerhalb beider Modi identisch */
+  --color-ink: #0a0f52;
+  --color-ink-text: #f0f2fa;
+  --color-ink-muted: #a8b0dd;
+  --color-ink-border: rgba(240, 242, 250, 0.16);
+
+  --shadow-focus: 0 0 0 3px rgba(27, 42, 128, 0.35);
+
+  /* Bewegung: physikalisch wirkende Kurven statt linear */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+.dark {
+  color-scheme: dark;
+
+  --color-background: #0b0d14;
+  --color-surface: #12151f;
+  --color-surface-sunken: #090b11;
+  --color-text: #eceef4;
+  --color-text-muted: #99a1b5;
+  --color-border: #242939;
+
+  /* Gleicher Farbton, für dunklen Grund aufgehellt (Kontrast statt Kosmetik) */
+  --color-accent: #8fa2ff;
+  --color-accent-hover: #aab8ff;
+  --color-accent-contrast: #0b0d14;
+  --color-accent-soft: rgba(143, 162, 255, 0.12);
+
+  --color-ink: #101740;
+  --color-ink-text: #f0f2fa;
+  --color-ink-muted: #a8b0dd;
+  --color-ink-border: rgba(240, 242, 250, 0.14);
+
+  --shadow-focus: 0 0 0 3px rgba(143, 162, 255, 0.45);
+}

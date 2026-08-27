@@ -1,0 +1,122 @@
+@import "../styles/design-tokens.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* Sticky-Nav darf Anker-Ziele nicht verdecken */
+    scroll-padding-top: 6rem;
+  }
+
+  body {
+    @apply bg-background text-text font-sans text-base antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Sichtbarer Fokus-Ring für Tastaturnutzung – ohne Ausnahme. */
+  :focus-visible {
+    outline: none;
+    box-shadow: var(--shadow-focus);
+    border-radius: 0.375rem;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Zahlen in Tabellenbreite – ruhigeres Bild bei Kennzahlen und Daten */
+  time,
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  /*
+    Bedienelemente: Druck und Farbwechsel bewusst unterschiedlich schnell.
+    140ms für transform, damit sich der Klick sofort anfühlt (alles über ~160ms
+    wirkt träge), 200ms für Farben, weil Hover nicht "bedient" wird.
+    Kein `transition: all` - das animiert sonst auch Layoutwerte mit.
+  */
+  .press {
+    transition-property: color, background-color, border-color, transform;
+    transition-timing-function: var(--ease-out);
+    transition-duration: 200ms, 200ms, 200ms, 140ms;
+  }
+
+  .press:active {
+    transform: scale(0.97);
+  }
+
+  /* Scroll-Einblendung, gesteuert von components/layout/Reveal.tsx */
+  .reveal {
+    opacity: 0;
+    transform: translateY(14px);
+    transition:
+      opacity 0.55s var(--ease-out),
+      transform 0.55s var(--ease-out);
+  }
+
+  .reveal[data-visible="true"] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /*
+    Statusmeldungen erscheinen nach einem Seitenwechsel. Ohne Übergang blitzen
+    sie hart auf. Start bei scale(0.98) statt scale(0): nichts in der echten
+    Welt entsteht aus dem Nichts.
+  */
+  .einblenden {
+    animation: einblenden 260ms var(--ease-out) both;
+  }
+
+  @keyframes einblenden {
+    from {
+      opacity: 0;
+      transform: translateY(-6px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/* Bewegung reduzieren: Deckkraft bleibt, Bewegung entfällt. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .einblenden {
+    animation: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

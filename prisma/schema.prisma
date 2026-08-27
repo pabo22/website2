@@ -1,0 +1,80 @@
+// Prisma-Schema
+// Datenbank: PostgreSQL (z. B. Neon, Supabase oder ein eigener Postgres-Server)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Kundenkonto. Der Betrieb selbst hat kein Konto in dieser Tabelle - der
+// Admin-Bereich läuft über ein gemeinsames Passwort aus der Umgebung.
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+
+  anfragen Anfrage[]
+}
+
+// Eine Termin- bzw. Kostenvoranschlagsanfrage.
+model Anfrage {
+  id String @id @default(cuid())
+
+  // Anfragen sind ausdrücklich OHNE Konto möglich - ein Registrierungszwang
+  // vor dem ersten Kontakt kostet die meisten Interessenten. Meldet sich
+  // jemand später an, bleibt die Anfrage über die E-Mail-Adresse auffindbar.
+  userId String?
+
+  // Kontaktdaten werden immer am Datensatz gespeichert, nicht nur über die
+  // Relation. So bleibt eine Anfrage vollständig, auch wenn ein Konto später
+  // gelöscht wird, und Gast und Kunde werden im Admin gleich behandelt.
+  name    String
+  email   String
+  telefon String?
+
+  beschreibung String    @db.Text
+  adresse      String
+  wunschtermin DateTime?
+
+  // URLs der hochgeladenen Fotos (Vercel Blob). Skalare Liste statt eigener
+  // Tabelle: es hängt keine weitere Information am einzelnen Foto.
+  fotos String[] @default([])
+
+  // Bearbeitungsstand. Wird im Admin-Bereich gesetzt.
+  // Werte: neu | in_bearbeitung | angebot_raus | erledigt
+  status String @default("neu")
+
+  createdAt DateTime @default(now())
+
+  // SetNull statt Cascade: löscht ein Kunde sein Konto, bleibt die Anfrage
+  // als Geschäftsvorgang erhalten (Aufbewahrungspflichten).
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([email])
+  @@index([status, createdAt])
+}
+
+// Seitenaufrufe, bewusst vollständig anonym.
+//
+// Gespeichert wird NUR: welcher Pfad, welcher Tag, wie oft. Keine IP, kein
+// Cookie, keine Kennung, kein Verlauf einzelner Besucher. Damit ist die
+// Statistik kein personenbezogenes Datum und braucht weder Einwilligung
+// noch Cookie-Banner - und der Betrieb sieht trotzdem, ob sich die Seite
+// lohnt.
+model Seitenaufruf {
+  id     String   @id @default(cuid())
+  pfad   String
+  tag    DateTime @db.Date
+  anzahl Int      @default(0)
+
+  // Ein Datensatz je Pfad und Tag - deshalb zusammengesetzt eindeutig.
+  @@unique([pfad, tag])
+  @@index([tag])
+}
