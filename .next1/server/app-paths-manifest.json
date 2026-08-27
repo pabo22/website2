@@ -1,0 +1,6 @@
+{
+  "/opengraph-image.png/route": "app/opengraph-image.png/route.js",
+  "/(marketing)/page": "app/(marketing)/page.js",
+  "/(marketing)/kontakt/page": "app/(marketing)/kontakt/page.js",
+  "/(marketing)/anfrage/page": "app/(marketing)/anfrage/page.js"
+}
